@@ -1,30 +1,24 @@
 <?php
-$secret_key = ""; // Your Private Key that's used for ShareX connection
-$sharexdir = "i/"; // where are your images stored
-$domain_url = 'https://your-domain.com/'; // Your domain name
-$lengthofstring = 6; // Lenght of the file name. Example: rgs63s.png
-
-function RandomString($length) {
-    $keys = array_merge(range(0,9), range('a', 'z'));
-
-    $key = '';
-    for($i=0; $i < $length; $i++) {
-        $key .= $keys[mt_rand(0, count($keys) - 1)];
+$secret_key = "secretkey"; // Your Private Key that's used for ShareX connection
+$sharexdir = "archive/"; // where are your images stored
+if(isset($_POST['user'])) {
+    if($_POST['user'] == "username") { //new user name 
+        global $sharexdir;
+	$sharexdir = "archive/otheruser"; //where you can add another user 
     }
-    return $key;
 }
+
+$domain_url = 'domain'; // Your domain name
 
 if(isset($_POST['secret'])) {
     if($_POST['secret'] == $secret_key) {
-        $filename = RandomString($lengthofstring);
         $target_file = $_FILES["sharex"]["name"];
         $fileType = pathinfo($target_file, PATHINFO_EXTENSION);
-
-        if (move_uploaded_file($_FILES["sharex"]["tmp_name"], $sharexdir.$filename.'.'.$fileType)) {
-            echo $domain_url.$sharexdir.$filename.'.'.$fileType;
+	if (move_uploaded_file($_FILES["sharex"]["tmp_name"], $sharexdir.$target_file)) {
+            echo $domain_url.$sharexdir.$target_file;
         }
-            else {
-           echo 'File upload failed - CHMOD/Folder doesn\'t exist?';
+        else {
+           echo "An error occured.";
         }
     }
     else {
